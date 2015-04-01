@@ -22,9 +22,16 @@ declare %restxq:path("acquisition")
 
   let $feed := fetch:xml($href)
   let $next := $feed//atom:link[matches(@rel, 'next')]/@href
+  let $next_a := if ($next) then <a href="/acquisition?{ $next }"></a> else ''
+
   for $entry in $feed//atom:entry
   let $book := <li>{ $entry/atom:title/text() }</li>
-  return $book
+  return <div>
+    <ul>
+      { $book }
+    </ul>
+    { $next_a }
+  </div>
 };
 
 declare %restxq:path("test")
