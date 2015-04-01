@@ -13,14 +13,14 @@ declare %restxq:path("harvest")
      db:create("feed", $url, "feed.xml"))
 };
 
-declare %restxq:path("index")
+declare %restxq:path("feed")
         %restxq:GET
         %output:method("xhtml")
         %output:omit-xml-declaration("yes")
-        function page:index() {
+        function page:feed() {
 
-  let $db := db:open("feed")
-  for $entry in $db//atom:entry
+  let $feed := fetch:xml("http://quebec.pretnumerique.ca/catalog.atom")
+  for $entry in $feed//atom:entry
   let $book := <li>{ $entry/atom:title/text() }</li>
   return $book
 };
