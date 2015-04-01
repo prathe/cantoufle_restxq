@@ -24,11 +24,11 @@ declare %restxq:path("acquisition")
   let $next := $feed//atom:link[matches(@rel, 'next')]/@href
   let $next_a := if ($next) then <a href="/acquisition?{ $next }"></a> else ''
 
-  for $entry in $feed//atom:entry
-  let $book := <li>{ $entry/atom:title/text() }</li>
+  let $books := for $entry in $feed//atom:entry
+    return <li>{ $entry/atom:title/text() }</li>
   return <div>
     <ul>
-      { $book }
+      { $books }
     </ul>
     { $next_a }
   </div>
