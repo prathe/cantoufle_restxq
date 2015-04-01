@@ -13,13 +13,15 @@ declare %restxq:path("harvest")
      db:create("feed", $url, "feed.xml"))
 };
 
-declare %restxq:path("feed")
+declare %restxq:path("acquisition")
         %restxq:GET
+        %rest:query-param('href', "{$href}")
         %output:method("xhtml")
         %output:omit-xml-declaration("yes")
-        function page:feed() {
+        function page:acquisition($href as xs:string?) {
 
-  let $feed := fetch:xml("http://quebec.pretnumerique.ca/catalog.atom")
+  let $feed := fetch:xml($href)
+  let $next := $feed//atom:link[matches(@rel, 'next')]/@href
   for $entry in $feed//atom:entry
   let $book := <li>{ $entry/atom:title/text() }</li>
   return $book
