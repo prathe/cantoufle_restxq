@@ -1,4 +1,5 @@
 module namespace page = 'http://basex.org/modules/web-page';
+declare namespace atom = "http://www.w3.org/2005/Atom";
 
 declare %restxq:path("harvest")
         %restxq:GET
@@ -15,17 +16,26 @@ declare %restxq:path("harvest")
 declare %restxq:path("index")
         %restxq:GET
         %output:method("xhtml")
+        %output:omit-xml-declaration("yes")
+        function page:index() {
+
+  let $db := db:open("feed")
+  for $entry in $db//atom:entry
+  let $book := <li>{ $entry/atom:title/text() }</li>
+  return $book
+};
+
+declare %restxq:path("test")
+        %restxq:GET
+        %output:method("xhtml")
         %output:omit-xml-declaration("no")
         %output:doctype-public("-//W3C//DTD XHTML 1.0 Transitional//EN")
         %output:doctype-system("http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd")
-        function page:index() {
+        function page:test() {
 
-    let $db := db:open("feed")
-    let $books := for $entry in $db/feed/entry
-      return <li>{ $entry/title/text() }</li>
-    return <ul>{ $books }</ul>
+  let $db := db:open("feed")
+  return count($db/atom:feed/atom:entry)
 };
-
 
 (:~
  : Creates a RESTXQ (HTTP) redirect header for the specified link.
